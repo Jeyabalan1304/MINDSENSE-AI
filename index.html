@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindSense AI - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #654ea3, #da77f2);
+            --secondary-gradient: linear-gradient(135deg, #2c3e50, #3498db);
+            --accent-color: #00ff9d;
+            --dark-bg: #0a1929;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --hover-bg: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .sidebar {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            height: calc(100vh - 2rem);
+            position: sticky;
+            top: 1rem;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .brand img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            background: var(--hover-bg);
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: var(--primary-gradient);
+            box-shadow: 0 4px 15px rgba(101, 78, 163, 0.3);
+        }
+
+        .main-content {
+            padding: 1rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .welcome-text {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .user-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-color: var(--accent-color);
+        }
+
+        .metric-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin: 1rem 0;
+            color: var(--accent-color);
+        }
+
+        .metric-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #00ff9d;
+        }
+
+        .metric-trend.down {
+            color: #ff4757;
+        }
+
+        .text-analysis {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .text-analysis h2 {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        textarea {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            color: white;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 120px;
+            margin-bottom: 1rem;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        button {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(101, 78, 163, 0.3);
+        }
+
+        #results {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--card-bg);
+            border-radius: 16px;
+            display: none;
+        }
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: #654ea3;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Add the chat button styles */
+        .chat-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary-gradient);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .chat-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 30px;
+            background: var(--primary-gradient);
+            opacity: 0.5;
+            filter: blur(15px);
+            transition: all 0.3s ease;
+            z-index: -1;
+        }
+
+        .chat-button:hover {
+            transform: translateY(-5px);
+        }
+
+        .chat-button:hover::before {
+            opacity: 1;
+            filter: blur(20px);
+        }
+
+        .chat-button i {
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .chat-button:hover i {
+            transform: scale(1.1);
+        }
+
+        .input-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .text-input {
+            flex: 1;
+        }
+
+        .voice-input {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .voice-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .transcription-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 10px;
+            color: rgba(255, 255, 255, 0.9);
+            display: none;
+        }
+
+        .transcription-box.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .transcription-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 5px;
+        }
+
+        .transcribed-text {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .record-btn {
+            background: var(--primary-gradient);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .record-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .record-btn.recording {
+            background: linear-gradient(135deg, #ff4b4b, #ff6b6b);
+            animation: pulse 1.5s infinite;
+        }
+
+        .recording-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            margin-top: 1rem;
+        }
+
+        .recording-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4CAF50;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .recording-indicator.active {
+            opacity: 1;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Add new styles for the results layout */
+        .results-container {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+            align-items: flex-start;
+        }
+
+        .emotion-results {
+            flex: 1;
+            min-width: 300px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideIn 0.5s ease forwards;
+        }
+
+        .emotion-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: slideIn 0.5s ease forwards 0.2s;
+        }
+
+        .emotion-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            animation: scaleIn 0.5s ease forwards 0.4s;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .emotion-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .emotion-name {
+            font-size: 1.8rem;
+            font-weight: 600;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            transform: translateX(-20px);
+            animation: slideInRight 0.5s ease forwards 0.3s;
+        }
+
+        .confidence-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+            opacity: 0;
+            transform: scaleX(0);
+            transform-origin: left;
+            animation: scaleWidth 0.8s ease forwards 0.6s;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: var(--primary-gradient);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 1s ease;
+        }
+
+        .confidence-text {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 0.5rem;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards 0.8s;
+        }
+
+        .emotion-table {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideIn 0.5s ease forwards 0.4s;
+        }
+
+        .emotion-table tr {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        .emotion-table tr:nth-child(1) { animation: slideInRight 0.5s ease forwards 0.5s; }
+        .emotion-table tr:nth-child(2) { animation: slideInRight 0.5s ease forwards 0.6s; }
+        .emotion-table tr:nth-child(3) { animation: slideInRight 0.5s ease forwards 0.7s; }
+        .emotion-table tr:nth-child(4) { animation: slideInRight 0.5s ease forwards 0.8s; }
+        .emotion-table tr:nth-child(5) { animation: slideInRight 0.5s ease forwards 0.9s; }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes scaleWidth {
+            from {
+                opacity: 0;
+                transform: scaleX(0);
+            }
+            to {
+                opacity: 1;
+                transform: scaleX(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .transcription-results {
+            flex: 1;
+            min-width: 300px;
+            background: var(--card-bg) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white !important;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .transcription-results h3 {
+            color: var(--accent-color) !important;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .transcription-text {
+            background: rgba(255, 255, 255, 0.03) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: white !important;
+            min-height: 100px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .transcription-text:empty::before {
+            color: rgba(255, 255, 255, 0.5) !important;
+        }
+
+        .loading-indicator {
+            display: none;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .loading-indicator i {
+            color: #4a6cf7;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Update existing styles */
+        .input-section {
+            margin-bottom: 2rem;
+        }
+
+        #recordButton {
+            transition: all 0.3s ease;
+        }
+
+        #recordButton.recording {
+            background: #dc3545;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Add new styles for tabs */
+        .tabs-container {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 1rem;
+        }
+
+        .tab {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tab.active {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(101, 78, 163, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Update existing styles */
+        .input-section {
+            margin-bottom: 0;
+        }
+
+        .results-container {
+            margin-top: 1.5rem;
+        }
+
+        /* Add styles for the emotion table */
+        .emotion-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .emotion-table th,
+        .emotion-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .emotion-table th {
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: 500;
+            color: var(--accent-color);
+        }
+
+        .emotion-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .emotion-table tr:hover td {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Add error message styles */
+        .error-message {
+            color: #ff4757;
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .input-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .real-time-recording,
+        .file-upload-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .real-time-recording h3,
+        .file-upload-section h3 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .file-upload-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .file-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .file-upload-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .file-upload-label:hover {
+            border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .file-upload-label i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+
+        .file-upload-label small {
+            margin-top: 0.5rem;
+            opacity: 0.7;
+        }
+
+        .upload-progress {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar::before {
+            content: '';
+            display: block;
+            height: 100%;
+            width: 0;
+            background: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            display: block;
+            text-align: center;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--accent-color);
+        }
+
+        @media (max-width: 768px) {
+            .input-methods {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="brand">
+                <img src="C:\Users\Divyesh N\Downloads\Project\static\images\logo.png" alt="MindSense AI">
+                <span>MindSense AI</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="{{ url_for('dashboard') }}" class="nav-item active">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{{ url_for('recommendations') }}" class="nav-item">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>Recommendations</span>
+                </a>
+                <a href="{{ url_for('professional_support') }}" class="nav-item">
+                    <i class="fas fa-user-md"></i>
+                    <span>Professional Support</span>
+                </a>
+                <a href="{{ url_for('specialists') }}" class="nav-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Find Specialists</span>
+                </a>
+                <a href="{{ url_for('detailed_recommendations') }}" class="nav-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Detailed Analysis</span>
+                </a>
+                <a href="{{ url_for('logout') }}" class="nav-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="user-info">
+                <div>
+                    <div class="welcome-text">Welcome back,</div>
+                    <div class="user-name">{{ username }}</div>
+                    </div>
+            </div>
+
+            <div class="cards-grid">
+                <div class="metric-card">
+                    <i class="fas fa-brain metric-icon"></i>
+                    <div>Emotional Intelligence Score</div>
+                    <div class="metric-value">92.8</div>
+                    <div class="metric-trend">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>12.4% this week</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <i class="fas fa-chart-line metric-icon"></i>
+                    <div>Sentiment Balance</div>
+                    <div class="metric-value">78%</div>
+                    <div class="metric-trend">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Positive trend</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <i class="fas fa-wave-square metric-icon"></i>
+                    <div>Voice Pattern Recognition</div>
+                    <div class="metric-value">96.5</div>
+                    <div class="metric-trend">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>High accuracy</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <i class="fas fa-clock metric-icon"></i>
+                    <div>Real-time Processing</div>
+                    <div class="metric-value">124<span style="font-size: 1rem">ms</span></div>
+                    <div class="metric-trend down">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>18% faster</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('text')">
+                        <i class="fas fa-font"></i> Text Emotion Analysis
+                    </button>
+                    <button class="tab" onclick="switchTab('speech')">
+                        <i class="fas fa-microphone"></i> Speech to Text Emotion
+                    </button>
+                    <button class="tab" onclick="switchTab('voice')">
+                        <i class="fas fa-wave-square"></i> Voice Emotion Detection
+                        </button>
+                    </div>
+
+                <div id="textTab" class="tab-content active">
+                    <div class="input-section">
+                        <div class="text-input">
+                            <textarea id="textInput" placeholder="How are you feeling today?"></textarea>
+                            <button id="analyzeText" onclick="analyzeEmotion()">
+                                <i class="fas fa-search"></i> Analyze Text
+                            </button>
+                    </div>
+                    </div>
+                </div>
+
+                <div id="speechTab" class="tab-content">
+                    <div class="input-section">
+                        <div class="voice-input">
+                            <div class="input-methods">
+                                <div class="real-time-recording">
+                                    <h3><i class="fas fa-microphone"></i> Real-time Recording</h3>
+                                    <div class="voice-controls">
+                                        <button id="recordButton" onclick="toggleRecording()" class="record-btn">
+                                            <i class="fas fa-microphone"></i>
+                                            <span>Start Recording</span>
+                                        </button>
+                                        <div class="recording-status">
+                                            <div class="recording-indicator"></div>
+                                            <span id="recordingStatus">Click to start recording</span>
+                    </div>
+                </div>
+                                </div>
+                                
+                                <div class="file-upload-section">
+                                    <h3><i class="fas fa-file-audio"></i> Upload Audio File</h3>
+                                    <div class="file-upload-container">
+                                        <input type="file" id="audioFileInput" accept="audio/*" class="file-input" onchange="handleFileUpload(event)">
+                                        <label for="audioFileInput" class="file-upload-label">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                            <span>Choose an audio file or drag it here</span>
+                                            <small>Supported formats: WAV, MP3, WebM</small>
+                                        </label>
+                                        <div id="uploadProgress" class="upload-progress">
+                                            <div class="progress-bar"></div>
+                                            <span class="progress-text">0%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="errorMessage" class="error-message"></div>
+            </div>
+        </div>
+    </div>
+
+                <div id="voiceTab" class="tab-content">
+                    <div class="input-section">
+                        <div class="voice-emotion-input">
+                            <div class="file-upload-section">
+                                <h3><i class="fas fa-file-audio"></i> Upload Voice File for Emotion Analysis</h3>
+                                <div class="file-upload-container">
+                                    <input type="file" id="voiceFileInput" accept=".wav" class="file-input" onchange="handleVoiceFileUpload(event)">
+                                    <label for="voiceFileInput" class="file-upload-label">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <span>Choose a voice file or drag it here</span>
+                                        <small>Supported format: WAV</small>
+                                    </label>
+                                    <div id="voiceUploadProgress" class="upload-progress">
+                                        <div class="progress-bar"></div>
+                                        <span class="progress-text">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="voiceErrorMessage" class="error-message"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="results-container" id="resultsContainer" style="display: none;">
+                    <div class="emotion-results">
+                        <div class="emotion-card">
+                            <div class="emotion-header">
+                                <i id="emotionIcon" class="fas emotion-icon"></i>
+                                <div class="emotion-name" id="emotionName"></div>
+                            </div>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" id="confidenceFill"></div>
+                            </div>
+                            <div class="confidence-text" id="confidenceText"></div>
+                        </div>
+                        <table class="emotion-table">
+                            <thead>
+                                <tr>
+                                    <th>Emotion</th>
+                                    <th>Confidence</th>
+                                </tr>
+                            </thead>
+                            <tbody id="emotionTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="transcription-results">
+                        <h3>Speech to Text</h3>
+                        <div class="loading-indicator">
+                            <i class="fas fa-spinner fa-2x"></i>
+                            <p>Processing your speech...</p>
+                        </div>
+                        <div class="transcription-text" id="transcriptionText"></div>
+                    </div>
+                </div>
+
+                <div id="loading" class="loading-container">
+                    <div class="loading-spinner"></div>
+                    <p>Analyzing your emotions...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <a href="{{ url_for('chatbot') }}" class="chat-button">
+        <i class="fas fa-comments"></i>
+    </a>
+
+    <script>
+        // Add tab switching functionality
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`.tab[onclick*="${tabName}"]`).classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tabName}Tab`).classList.add('active');
+
+            // Reset results and loading states
+            document.getElementById('resultsContainer').style.display = 'none';
+            document.getElementById('loading').style.display = 'none';
+            
+            // Reset recording state if switching tabs
+            if (isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+                const recordButton = document.getElementById('recordButton');
+                recordButton.classList.remove('recording');
+                recordButton.innerHTML = '<i class="fas fa-microphone"></i> Start Recording';
+                document.getElementById('recordingStatus').textContent = 'Click to start recording';
+            }
+
+            // Reset file inputs
+            document.getElementById('voiceFileInput').value = '';
+            document.getElementById('audioFileInput').value = '';
+        }
+
+        // Update the existing analyzeEmotion function
+        async function analyzeEmotion() {
+            const text = document.getElementById('textInput').value.trim();
+            if (!text) {
+                alert('Please enter some text to analyze.');
+                return;
+            }
+
+            document.getElementById('loading').style.display = 'flex';
+            document.getElementById('resultsContainer').style.display = 'none';
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: text })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const prediction = data.predictions[0];
+                    
+                    // Update emotion icon and name
+                    const emotionIcon = document.getElementById('emotionIcon');
+                    const emotionName = document.getElementById('emotionName');
+                    const confidenceFill = document.getElementById('confidenceFill');
+                    const confidenceText = document.getElementById('confidenceText');
+                    
+                    // Map emotions to Font Awesome icons
+                    const emotionIcons = {
+                        'joy': 'fa-smile-beam',
+                        'sadness': 'fa-sad-tear',
+                        'anger': 'fa-angry',
+                        'fear': 'fa-ghost',
+                        'surprise': 'fa-surprise',
+                        'neutral': 'fa-meh',
+                        'love': 'fa-heart'
+                    };
+                    
+                    emotionIcon.className = `fas emotion-icon ${emotionIcons[prediction.emotion] || 'fa-meh'}`;
+                    emotionName.textContent = prediction.emotion.charAt(0).toUpperCase() + prediction.emotion.slice(1);
+                    
+                    // Update confidence bar with animation
+                    const confidenceValue = parseFloat(prediction.confidence);
+                    setTimeout(() => {
+                        confidenceFill.style.width = `${confidenceValue}%`;
+                        confidenceText.textContent = `Confidence: ${prediction.confidence}`;
+                    }, 100);
+                    
+                    // Update emotion table
+                    const emotionTableBody = document.getElementById('emotionTableBody');
+                    emotionTableBody.innerHTML = '';
+                    
+                    Object.entries(data.predictions[0]).forEach(([key, value]) => {
+                        if (key === 'emotion' || key === 'confidence') {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${key.charAt(0).toUpperCase() + key.slice(1)}</td>
+                                <td>${value}</td>
+                            `;
+                            emotionTableBody.appendChild(row);
+                        }
+                    });
+                    
+                    // Show results container
+                    document.getElementById('resultsContainer').style.display = 'flex';
+                    document.querySelector('.transcription-results').style.display = 'none';
+                } else {
+                    alert('Error analyzing emotions. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // Add necessary variables
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let isRecording = false;
+        let stream = null;
+
+        // Update the toggleRecording function with better audio handling
+        async function toggleRecording() {
+            const recordButton = document.getElementById('recordButton');
+            const recordStatus = document.getElementById('recordingStatus');
+            const recordingIndicator = document.querySelector('.recording-indicator');
+            const loadingIndicator = document.querySelector('.loading-indicator');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const transcriptionText = document.getElementById('transcriptionText');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Reset error message and results
+            errorMessage.style.display = 'none';
+            resultsContainer.style.display = 'none';
+            
+            if (!isRecording) {
+                try {
+                    // Request microphone access with specific constraints
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        audio: {
+                            channelCount: 1,
+                            sampleRate: 16000,
+                            sampleSize: 16,
+                            volume: 1.0,
+                            echoCancellation: true,
+                            noiseSuppression: true,
+                            autoGainControl: true
+                        }
+                    });
+                    
+                    // Set up audio context for visualization
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const source = audioContext.createMediaStreamSource(stream);
+                    const analyser = audioContext.createAnalyser();
+                    source.connect(analyser);
+                    setupAudioVisualization(analyser);
+                    
+                    // Configure MediaRecorder with proper audio format
+                    mediaRecorder = new MediaRecorder(stream, {
+                        mimeType: 'audio/webm;codecs=opus',
+                        audioBitsPerSecond: 16000
+                    });
+                    
+                    audioChunks = [];
+                    
+                    // Handle data available event
+                    mediaRecorder.ondataavailable = (event) => {
+                        if (event.data.size > 0) {
+                            audioChunks.push(event.data);
+                        }
+                    };
+                    
+                    // Handle recording stop
+                    mediaRecorder.onstop = async () => {
+                        try {
+                            // Stop all tracks in the stream
+                            stream.getTracks().forEach(track => track.stop());
+                            
+                            // Create audio blob with proper format
+                            const audioBlob = new Blob(audioChunks, { type: 'audio/webm;codecs=opus' });
+                            
+                            // Create FormData and append the audio file
+                            const formData = new FormData();
+                            formData.append('audio', audioBlob, 'recording.webm');
+                            
+                            // Show loading state
+                            loadingIndicator.style.display = 'block';
+                            transcriptionText.textContent = 'Processing your speech...';
+                            resultsContainer.style.display = 'flex';
+                            document.querySelector('.transcription-results').style.display = 'block';
+                            
+                            // Send audio to server
+                            const response = await fetch('/process_voice', {
+                                method: 'POST',
+                                body: formData
+                            });
+                            
+                            const result = await response.json();
+                            
+                            if (result.success) {
+                                // Display transcribed text
+                                transcriptionText.textContent = result.transcribed_text || 'No text transcribed';
+                                
+                                // Update emotion table
+                                const emotionTableBody = document.getElementById('emotionTableBody');
+                                emotionTableBody.innerHTML = '';
+                                
+                                // Sort emotions by confidence
+                                const sortedEmotions = Object.entries(result.all_emotions)
+                                    .sort(([,a], [,b]) => b - a);
+                                
+                                sortedEmotions.forEach(([emotion, confidence]) => {
+                                    const row = document.createElement('tr');
+                                    row.innerHTML = `
+                                        <td>${emotion.charAt(0).toUpperCase() + emotion.slice(1)}</td>
+                                        <td>${confidence.toFixed(1)}%</td>
+                                    `;
+                                    emotionTableBody.appendChild(row);
+                                });
+                                
+                                // Update emotion icon and name
+                                const emotionIcon = document.getElementById('emotionIcon');
+                                const emotionName = document.getElementById('emotionName');
+                                const confidenceFill = document.getElementById('confidenceFill');
+                                const confidenceText = document.getElementById('confidenceText');
+                                
+                                // Map emotions to Font Awesome icons
+                                const emotionIcons = {
+                                    'joy': 'fa-smile-beam',
+                                    'sadness': 'fa-sad-tear',
+                                    'anger': 'fa-angry',
+                                    'fear': 'fa-ghost',
+                                    'surprise': 'fa-surprise',
+                                    'neutral': 'fa-meh',
+                                    'love': 'fa-heart'
+                                };
+                                
+                                emotionIcon.className = `fas emotion-icon ${emotionIcons[result.emotion] || 'fa-meh'}`;
+                                emotionName.textContent = result.emotion.charAt(0).toUpperCase() + result.emotion.slice(1);
+                                
+                                // Update confidence bar with animation
+                                const confidenceValue = parseFloat(result.confidence);
+                                setTimeout(() => {
+                                    confidenceFill.style.width = `${confidenceValue}%`;
+                                    confidenceText.textContent = `Confidence: ${result.confidence}`;
+                                }, 100);
+                            } else {
+                                throw new Error(result.error || 'Failed to process audio');
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            errorMessage.textContent = `Error: ${error.message}`;
+                            errorMessage.style.display = 'block';
+                            resultsContainer.style.display = 'none';
+                        } finally {
+                            loadingIndicator.style.display = 'none';
+                            recordStatus.textContent = 'Click to start recording';
+                            recordingIndicator.classList.remove('active');
+                        }
+                    };
+                    
+                    // Start recording with a timeslice to get data periodically
+                    mediaRecorder.start(1000);
+                    isRecording = true;
+                    recordButton.classList.add('recording');
+                    recordButton.innerHTML = '<i class="fas fa-stop"></i> Stop Recording';
+                    recordStatus.textContent = 'Recording... Speak now';
+                    recordingIndicator.classList.add('active');
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    errorMessage.textContent = `Error: ${error.message || 'Could not access microphone'}`;
+                    errorMessage.style.display = 'block';
+                    recordStatus.textContent = 'Error accessing microphone';
+                }
+            } else {
+                try {
+                    // Stop recording
+                    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                        mediaRecorder.stop();
+                        recordStatus.textContent = 'Processing...';
+                    }
+                    isRecording = false;
+                    recordButton.classList.remove('recording');
+                    recordButton.innerHTML = '<i class="fas fa-microphone"></i> Start Recording';
+                    recordingIndicator.classList.remove('active');
+                } catch (error) {
+                    console.error('Error stopping recording:', error);
+                    errorMessage.textContent = `Error: ${error.message || 'Could not stop recording'}`;
+                    errorMessage.style.display = 'block';
+                }
+            }
+        }
+
+        // Update audio visualization function
+        function setupAudioVisualization(analyser) {
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            
+            function draw() {
+                if (!isRecording) return;
+                
+                requestAnimationFrame(draw);
+                analyser.getByteFrequencyData(dataArray);
+                
+                // Calculate average volume
+                const average = dataArray.reduce((acc, val) => acc + val, 0) / bufferLength;
+                
+                // Update recording indicator size based on volume
+                const indicator = document.querySelector('.recording-indicator');
+                if (indicator) {
+                    const scale = 1 + (average / 128) * 0.5;
+                    indicator.style.transform = `scale(${scale})`;
+                }
+            }
+            
+            draw();
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Reset any existing recording state
+            isRecording = false;
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            stream = null;
+            mediaRecorder = null;
+            audioChunks = [];
+            
+            // Check for microphone support
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                const errorMessage = document.getElementById('errorMessage');
+                errorMessage.textContent = 'Your browser does not support audio recording';
+                errorMessage.style.display = 'block';
+                document.getElementById('recordButton').disabled = true;
+            }
+        });
+
+        // Add file upload handling function
+        async function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const errorMessage = document.getElementById('errorMessage');
+            const uploadProgress = document.getElementById('uploadProgress');
+            const progressBar = uploadProgress.querySelector('.progress-bar');
+            const progressText = uploadProgress.querySelector('.progress-text');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const loadingIndicator = document.querySelector('.loading-indicator');
+            const transcriptionText = document.getElementById('transcriptionText');
+
+            // Reset states
+            errorMessage.style.display = 'none';
+            uploadProgress.style.display = 'block';
+            resultsContainer.style.display = 'none';
+
+            try {
+                // Validate file type
+                const validTypes = ['audio/wav', 'audio/mpeg', 'audio/webm', 'audio/mp3'];
+                if (!validTypes.includes(file.type)) {
+                    throw new Error('Invalid file type. Please upload WAV, MP3, or WebM files.');
+                }
+
+                // Create FormData
+                const formData = new FormData();
+                formData.append('audio', file);
+
+                // Show upload progress
+                progressBar.style.width = '0%';
+                progressText.textContent = '0%';
+
+                // Send file to server
+                const response = await fetch('/process_voice', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                // Update progress
+                progressBar.style.width = '100%';
+                progressText.textContent = '100%';
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Display results
+                    resultsContainer.style.display = 'flex';
+                    document.querySelector('.transcription-results').style.display = 'block';
+                    transcriptionText.textContent = result.transcribed_text || 'No text transcribed';
+
+                    // Update emotion table
+                    const emotionTableBody = document.getElementById('emotionTableBody');
+                    emotionTableBody.innerHTML = '';
+
+                    // Sort emotions by confidence
+                    const sortedEmotions = Object.entries(result.all_emotions)
+                        .sort(([,a], [,b]) => b - a);
+
+                    sortedEmotions.forEach(([emotion, confidence]) => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${emotion.charAt(0).toUpperCase() + emotion.slice(1)}</td>
+                            <td>${confidence.toFixed(1)}%</td>
+                        `;
+                        emotionTableBody.appendChild(row);
+                    });
+
+                    // Update emotion icon and name
+                    const emotionIcon = document.getElementById('emotionIcon');
+                    const emotionName = document.getElementById('emotionName');
+                    const confidenceFill = document.getElementById('confidenceFill');
+                    const confidenceText = document.getElementById('confidenceText');
+
+                    // Map emotions to Font Awesome icons
+                    const emotionIcons = {
+                        'joy': 'fa-smile-beam',
+                        'sadness': 'fa-sad-tear',
+                        'anger': 'fa-angry',
+                        'fear': 'fa-ghost',
+                        'surprise': 'fa-surprise',
+                        'neutral': 'fa-meh',
+                        'love': 'fa-heart'
+                    };
+
+                    emotionIcon.className = `fas emotion-icon ${emotionIcons[result.emotion] || 'fa-meh'}`;
+                    emotionName.textContent = result.emotion.charAt(0).toUpperCase() + result.emotion.slice(1);
+
+                    // Update confidence bar with animation
+                    const confidenceValue = parseFloat(result.confidence);
+                    setTimeout(() => {
+                        confidenceFill.style.width = `${confidenceValue}%`;
+                        confidenceText.textContent = `Confidence: ${result.confidence}`;
+                    }, 100);
+                } else {
+                    throw new Error(result.error || 'Failed to process audio file');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.textContent = `Error: ${error.message}`;
+                errorMessage.style.display = 'block';
+                resultsContainer.style.display = 'none';
+            } finally {
+                // Hide progress after a short delay
+                setTimeout(() => {
+                    uploadProgress.style.display = 'none';
+                    progressBar.style.width = '0%';
+                    progressText.textContent = '0%';
+                }, 1000);
+                loadingIndicator.style.display = 'none';
+            }
+        }
+
+        // Add drag and drop support
+        document.addEventListener('DOMContentLoaded', () => {
+            const fileUploadLabel = document.querySelector('.file-upload-label');
+            const fileInput = document.getElementById('audioFileInput');
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                fileUploadLabel.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                fileUploadLabel.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                fileUploadLabel.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight(e) {
+                fileUploadLabel.classList.add('drag-active');
+            }
+
+            function unhighlight(e) {
+                fileUploadLabel.classList.remove('drag-active');
+            }
+
+            fileUploadLabel.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const file = dt.files[0];
+                fileInput.files = dt.files;
+                handleFileUpload({ target: { files: [file] } });
+            }
+        });
+
+        // Add voice emotion detection handling function
+        async function handleVoiceFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const errorMessage = document.getElementById('voiceErrorMessage');
+            const uploadProgress = document.getElementById('voiceUploadProgress');
+            const progressBar = uploadProgress.querySelector('.progress-bar');
+            const progressText = uploadProgress.querySelector('.progress-text');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const loadingIndicator = document.querySelector('.loading-indicator');
+
+            // Reset states
+            errorMessage.style.display = 'none';
+            uploadProgress.style.display = 'block';
+            resultsContainer.style.display = 'none';
+
+            try {
+                // Validate file type
+                if (file.type !== 'audio/wav') {
+                    throw new Error('Invalid file type. Please upload WAV files only.');
+                }
+
+                // Create FormData
+                const formData = new FormData();
+                formData.append('audio', file);
+                formData.append('analysis_type', 'voice_emotion');  // Add analysis type parameter
+
+                // Show upload progress
+                progressBar.style.width = '0%';
+                progressText.textContent = '0%';
+
+                // Send file to server
+                const response = await fetch('/analyze_voice_emotion', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                // Update progress
+                progressBar.style.width = '100%';
+                progressText.textContent = '100%';
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Display results
+                    resultsContainer.style.display = 'flex';
+                    document.querySelector('.transcription-results').style.display = 'none';
+
+                    // Update emotion table
+                    const emotionTableBody = document.getElementById('emotionTableBody');
+                    emotionTableBody.innerHTML = '';
+
+                    // Sort emotions by confidence
+                    const sortedEmotions = Object.entries(result.emotions)
+                        .sort(([,a], [,b]) => b - a);
+
+                    sortedEmotions.forEach(([emotion, confidence]) => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${emotion.charAt(0).toUpperCase() + emotion.slice(1)}</td>
+                            <td>${confidence.toFixed(1)}%</td>
+                        `;
+                        emotionTableBody.appendChild(row);
+                    });
+
+                    // Update emotion icon and name
+                    const emotionIcon = document.getElementById('emotionIcon');
+                    const emotionName = document.getElementById('emotionName');
+                    const confidenceFill = document.getElementById('confidenceFill');
+                    const confidenceText = document.getElementById('confidenceText');
+
+                    // Map emotions to Font Awesome icons
+                    const emotionIcons = {
+                        'happy': 'fa-smile-beam',
+                        'sad': 'fa-sad-tear',
+                        'angry': 'fa-angry',
+                        'fearful': 'fa-ghost',
+                        'surprised': 'fa-surprise',
+                        'neutral': 'fa-meh',
+                        'calm': 'fa-peace'
+                    };
+
+                    emotionIcon.className = `fas emotion-icon ${emotionIcons[result.dominant_emotion] || 'fa-meh'}`;
+                    emotionName.textContent = result.dominant_emotion.charAt(0).toUpperCase() + result.dominant_emotion.slice(1);
+
+                    // Update confidence bar with animation
+                    const confidenceValue = parseFloat(result.confidence);
+                    setTimeout(() => {
+                        confidenceFill.style.width = `${confidenceValue}%`;
+                        confidenceText.textContent = `Confidence: ${confidenceValue.toFixed(1)}%`;
+                    }, 100);
+                } else {
+                    throw new Error(result.error || 'Failed to analyze voice emotion');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.textContent = `Error: ${error.message}`;
+                errorMessage.style.display = 'block';
+                resultsContainer.style.display = 'none';
+            } finally {
+                // Hide progress after a short delay
+                setTimeout(() => {
+                    uploadProgress.style.display = 'none';
+                    progressBar.style.width = '0%';
+                    progressText.textContent = '0%';
+                }, 1000);
+                loadingIndicator.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html> 

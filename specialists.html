@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Specialists - MindSense AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .specialists-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .section-header i {
+            font-size: 3rem;
+            color: #654ea3;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .finder-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .finder-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .finder-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .finder-card i {
+            font-size: 2.5rem;
+            color: #654ea3;
+            margin-bottom: 1rem;
+        }
+
+        .finder-card h3 {
+            color: white;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .finder-card p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .finder-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #654ea3, #da77f2);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .finder-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #7b65b8, #e48ff5);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 2rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(-5px);
+        }
+
+        .additional-resources {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .additional-resources h2 {
+            color: white;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .resources-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .resources-list li {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .resources-list li a {
+            color: #da77f2;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .resources-list li a:hover {
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .finder-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .location-search {
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            text-align: center;
+        }
+
+        .location-input {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .location-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #654ea3, #da77f2);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #7b65b8, #e48ff5);
+        }
+
+        .results-container {
+            display: none;
+        }
+
+        .results-container.show {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar glass-nav">
+        <div class="nav-brand">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="MindSense AI" class="nav-logo">
+            <span class="brand-text">MindSense AI</span>
+        </div>
+        <div class="nav-user">
+            <div class="welcome">
+                <i class="fas fa-user-circle"></i>
+                <span>Welcome, {{ session.get('username', 'User') }}</span>
+            </div>
+            <a href="{{ url_for('logout') }}" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </nav>
+
+    <div class="specialists-container">
+        <a href="{{ url_for('recommendations') }}" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            Back to Recommendations
+        </a>
+
+        <div class="section-header">
+            <i class="fas fa-user-md"></i>
+            <h1>Find Mental Health Specialists</h1>
+            <p>Connect with qualified professionals who can provide the support you need</p>
+        </div>
+
+        <div class="location-search">
+            <input type="text" id="locationInput" class="location-input" placeholder="Enter your location (e.g., Kottivakam)" />
+            <button onclick="searchLocation()" class="search-btn">
+                <i class="fas fa-search"></i>
+                Find Specialists
+            </button>
+        </div>
+
+        <div id="resultsContainer" class="results-container">
+            <div class="finder-grid">
+                <div class="finder-card">
+                    <i class="fas fa-search-location"></i>
+                    <h3>Find a Therapist</h3>
+                    <p>Search for licensed therapists and counselors near your location who specialize in various mental health concerns.</p>
+                    <a href="https://g.co/kgs/xvJDHc9" target="_blank" class="finder-btn">
+                        <i class="fas fa-external-link-alt"></i>
+                        Search Therapists
+                    </a>
+                </div>
+
+                <div class="finder-card">
+                    <i class="fas fa-hospital-user"></i>
+                    <h3>Mental Health Centers</h3>
+                    <p>Locate mental health centers and clinics that offer comprehensive care and support services.</p>
+                    <a href="https://g.co/kgs/MuTrbSL" target="_blank" class="finder-btn">
+                        <i class="fas fa-external-link-alt"></i>
+                        Find Centers
+                    </a>
+                </div>
+
+                <div class="finder-card">
+                    <i class="fas fa-phone-alt"></i>
+                    <h3>24/7 Support Line</h3>
+                    <p>Connect with trained counselors anytime through our national mental health helpline.</p>
+                    <a href="tel:1800599599" class="finder-btn">
+                        <i class="fas fa-phone"></i>
+                        Call Now
+                    </a>
+                </div>
+            </div>
+
+            <div class="additional-resources">
+                <h2><i class="fas fa-info-circle"></i> Additional Resources</h2>
+                <ul class="resources-list">
+                    <li>
+                        <a href="https://www.nimh.nih.gov/" target="_blank">
+                            <i class="fas fa-external-link-alt"></i>
+                            National Institute of Mental Health - Help Resources
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.nami.org/support-education/nami-helpline/" target="_blank">
+                            <i class="fas fa-external-link-alt"></i>
+                            NAMI HelpLine - Mental Health Support
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.who.int/news-room/feature-stories/mental-well-being-resources-for-the-public" target="_blank">
+                            <i class="fas fa-external-link-alt"></i>
+                            WHO Mental Health Resources
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function searchLocation() {
+            const locationInput = document.getElementById('locationInput').value.trim().toLowerCase();
+            const resultsContainer = document.getElementById('resultsContainer');
+            
+            if (locationInput) {
+                // Show results with animation
+                resultsContainer.classList.add('show');
+                
+                // If location is Kottivakam, update the links
+                if (locationInput === 'kottivakam') {
+                    // Update the href attributes with the specific links
+                    document.querySelector('.finder-card:nth-child(1) a').href = 'https://g.co/kgs/xvJDHc9';
+                    document.querySelector('.finder-card:nth-child(2) a').href = 'https://g.co/kgs/MuTrbSL';
+                }
+            } else {
+                alert('Please enter a location to search for specialists.');
+            }
+        }
+    </script>
+</body>
+</html> 

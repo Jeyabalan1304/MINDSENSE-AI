@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About MindSense AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #654ea3, #da77f2);
+            color: white;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .about-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding-top: 2rem;
+        }
+
+        .logo {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .about-title {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .about-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-description {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .about-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .about-section {
+            margin-bottom: 2rem;
+        }
+
+        .about-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .about-section p {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .cta-section {
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .cta-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .about-title {
+                font-size: 2rem;
+            }
+
+            .feature-card {
+                padding: 1.5rem;
+            }
+
+            .about-content {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="about-header">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="MindSense AI Logo" class="logo">
+            <h1 class="about-title">MindSense AI</h1>
+            <p class="about-subtitle">Understanding Emotions, Empowering Minds</p>
+        </header>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-brain feature-icon"></i>
+                <h3 class="feature-title">Emotion Analysis</h3>
+                <p class="feature-description">Advanced AI-powered emotion detection from text and voice input with high accuracy.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-comments feature-icon"></i>
+                <h3 class="feature-title">Smart Chat</h3>
+                <p class="feature-description">Empathetic chatbot that understands and responds to your emotional state.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-music feature-icon"></i>
+                <h3 class="feature-title">Music Recommendations</h3>
+                <p class="feature-description">Personalized music suggestions based on your emotional state.</p>
+            </div>
+        </div>
+
+        <div class="about-content">
+            <div class="about-section">
+                <h2>Our Mission</h2>
+                <p>At MindSense AI, we're dedicated to bridging the gap between technology and emotional well-being. Our platform combines cutting-edge artificial intelligence with a deep understanding of human emotions to provide personalized support and insights.</p>
+            </div>
+
+            <div class="about-section">
+                <h2>How It Works</h2>
+                <p>Using advanced natural language processing and machine learning algorithms, MindSense AI analyzes text and voice input to understand emotional states. Our system then provides tailored recommendations, including music suggestions and breathing exercises, to help manage and enhance your emotional well-being.</p>
+            </div>
+
+            <div class="about-section">
+                <h2>Features</h2>
+                <p>• Real-time emotion analysis from text and voice</p>
+                <p>• Personalized music recommendations</p>
+                <p>• Guided breathing exercises</p>
+                <p>• Empathetic chat support</p>
+                <p>• Voice-to-text capabilities</p>
+                <p>• Secure and private interaction</p>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <a href="{{ url_for('login') }}" class="cta-button">
+                <i class="fas fa-sign-in-alt"></i> Get Started
+            </a>
+        </div>
+    </div>
+</body>
+</html> 

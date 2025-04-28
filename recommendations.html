@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindSense AI - Recommendations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #654ea3, #da77f2);
+            --dark-bg: #0a1929;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --hover-bg: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            background: var(--card-bg);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            color: white;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: var(--hover-bg);
+            transform: translateX(-5px);
+        }
+
+        .emotion-card {
+            background: linear-gradient(135deg, rgba({{ emotion_data.color|replace('#', '') }}22, 0.1), rgba({{ emotion_data.color|replace('#', '') }}44, 0.2));
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid {{ emotion_data.color }}33;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .emotion-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .emotion-icon {
+            font-size: 3rem;
+            color: {{ emotion_data.color }};
+            text-shadow: 0 0 10px {{ emotion_data.color }}66;
+        }
+
+        .emotion-details h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, {{ emotion_data.color }}, {{ emotion_data.color }}aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .emotion-details p {
+            margin: 0.5rem 0 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+            color: {{ emotion_data.color }};
+        }
+
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .recommendation-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recommendation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, {{ emotion_data.color }}11, {{ emotion_data.color }}22);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .recommendation-card:hover::before {
+            opacity: 1;
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-color: {{ emotion_data.color }}66;
+        }
+
+        .recommendation-card h2 {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-top: 0;
+            color: {{ emotion_data.color }};
+            font-size: 1.5rem;
+            position: relative;
+        }
+
+        .recommendation-card h2 i {
+            font-size: 1.8rem;
+            text-shadow: 0 0 10px {{ emotion_data.color }}44;
+        }
+
+        .music-list {
+            list-style: none;
+            padding: 0;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .music-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 0.8rem;
+            background: rgba(255, 255, 255, 0.03);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .music-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: {{ emotion_data.color }}44;
+            transform: translateX(5px);
+        }
+
+        .music-item i {
+            color: {{ emotion_data.color }};
+            font-size: 1.2rem;
+        }
+
+        .music-item a {
+            color: white;
+            text-decoration: none;
+            flex: 1;
+            font-size: 1rem;
+        }
+
+        .music-item a:hover {
+            color: {{ emotion_data.color }};
+        }
+
+        .breathing-exercise {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 2rem;
+            border-radius: 16px;
+            margin-top: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .breathing-exercise p {
+            margin: 0;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .breathing-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 2rem;
+        }
+
+        .breathing-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: {{ emotion_data.color }}33;
+            margin: 2rem auto;
+            opacity: 0.8;
+            display: none;
+            border: 2px solid {{ emotion_data.color }}66;
+            box-shadow: 0 0 20px {{ emotion_data.color }}33;
+        }
+
+        .breathing-circle.active {
+            display: block;
+            animation: breathe 8s infinite ease-in-out;
+        }
+
+        @keyframes breathe {
+            0%, 100% { 
+                transform: scale(1); 
+                opacity: 0.5;
+                box-shadow: 0 0 20px {{ emotion_data.color }}33;
+            }
+            50% { 
+                transform: scale(1.3); 
+                opacity: 0.9;
+                box-shadow: 0 0 40px {{ emotion_data.color }}66;
+            }
+        }
+
+        .timer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .timer-btn {
+            background: linear-gradient(135deg, {{ emotion_data.color }}dd, {{ emotion_data.color }}aa);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .timer-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px {{ emotion_data.color }}44;
+        }
+
+        .timer-display {
+            font-size: 2rem;
+            font-weight: 600;
+            color: {{ emotion_data.color }};
+            text-shadow: 0 0 10px {{ emotion_data.color }}44;
+        }
+
+        .breathing-phases {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+            color: {{ emotion_data.color }};
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .breathing-phases.active {
+            display: block;
+        }
+
+        /* Chat Widget Styles */
+        .chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            width: 350px;
+            background: var(--dark-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            max-height: 600px;
+        }
+
+        .chat-widget.minimized {
+            height: 60px;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: var(--primary-gradient);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .chat-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chat-messages {
+            padding: 1rem;
+            height: 400px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 0.8rem 1rem;
+            border-radius: 15px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .user-message {
+            background: var(--primary-gradient);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .bot-message {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        .chat-input {
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.8rem 1rem;
+            border-radius: 25px;
+            color: white;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input input:focus {
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .chat-input button {
+            background: var(--primary-gradient);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input button:hover {
+            transform: scale(1.1);
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            align-self: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 0.2rem;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: typingDot 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingDot {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="{{ url_for('dashboard') }}" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+        </div>
+
+        <div class="emotion-card">
+            <div class="emotion-header">
+                <i class="fas {{ emotion_data.icon }} emotion-icon"></i>
+                <div class="emotion-details">
+                    <h1>{{ emotion_data.emotion|title }} Detected</h1>
+                    <p>Confidence: {{ emotion_data.confidence }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="recommendations-grid">
+            <div class="recommendation-card">
+                <h2><i class="fas fa-music"></i> Music for {{ emotion_data.emotion|title }}</h2>
+                <ul class="music-list">
+                    {% for song in emotion_data.music %}
+                    <li class="music-item">
+                        <i class="fas fa-play"></i>
+                        {{ song|safe }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="recommendation-card">
+                <h2><i class="fas fa-wind"></i> Personalized Breathing Exercise</h2>
+                <div class="breathing-exercise">
+                    <p>{{ emotion_data.breathing }}</p>
+                    <div class="breathing-controls">
+                        <div class="breathing-circle" id="breathingCircle"></div>
+                        <div class="breathing-phases" id="breathingPhase">Inhale...</div>
+                        <div class="timer">
+                            <button class="timer-btn" onclick="startBreathingExercise()">
+                                <i class="fas fa-play"></i>
+                                Start Exercise
+                            </button>
+                            <div class="timer-display" id="timerDisplay">2:00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget" id="chatWidget">
+        <div class="chat-header" id="chatHeader">
+            <h3><i class="fas fa-comment-dots"></i> Chat with MindSense</h3>
+            <i class="fas fa-minus" id="minimizeChat"></i>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot-message">
+                Hi there! 👋 I'm here to chat and support you through your emotions. How are you feeling right now?
+            </div>
+            <div class="typing-indicator">
+                <span>MindSense is typing</span>
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Type your message..." />
+            <button id="sendMessage">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let isExerciseRunning = false;
+        let timerInterval;
+        let timeLeft;
+        let phaseInterval;
+
+        function startBreathingExercise() {
+            const button = document.querySelector('.timer-btn');
+            const circle = document.getElementById('breathingCircle');
+            const display = document.getElementById('timerDisplay');
+            const phaseDisplay = document.getElementById('breathingPhase');
+
+            if (!isExerciseRunning) {
+                // Start exercise
+                isExerciseRunning = true;
+                button.innerHTML = '<i class="fas fa-stop"></i> Stop Exercise';
+                circle.classList.add('active');
+                phaseDisplay.classList.add('active');
+                
+                // Set timer for 2 minutes
+                timeLeft = 120;
+                updateTimer();
+                timerInterval = setInterval(updateTimer, 1000);
+
+                // Start breathing phases
+                let phaseIndex = 0;
+                const phases = ['Inhale...', 'Hold...', 'Exhale...', 'Hold...'];
+                phaseInterval = setInterval(() => {
+                    phaseDisplay.textContent = phases[phaseIndex];
+                    phaseIndex = (phaseIndex + 1) % phases.length;
+                }, 2000);
+            } else {
+                // Stop exercise
+                stopExercise();
+            }
+        }
+
+        function stopExercise() {
+            const button = document.querySelector('.timer-btn');
+            const circle = document.getElementById('breathingCircle');
+            const display = document.getElementById('timerDisplay');
+            const phaseDisplay = document.getElementById('breathingPhase');
+
+            isExerciseRunning = false;
+            button.innerHTML = '<i class="fas fa-play"></i> Start Exercise';
+            circle.classList.remove('active');
+            phaseDisplay.classList.remove('active');
+            clearInterval(timerInterval);
+            clearInterval(phaseInterval);
+            display.textContent = '2:00';
+        }
+
+        function updateTimer() {
+            const display = document.getElementById('timerDisplay');
+            
+            if (timeLeft <= 0) {
+                stopExercise();
+                return;
+            }
+
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            display.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            timeLeft--;
+        }
+
+        // Chat Widget Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatWidget = document.getElementById('chatWidget');
+            const chatHeader = document.getElementById('chatHeader');
+            const minimizeChat = document.getElementById('minimizeChat');
+            const chatMessages = document.getElementById('chatMessages');
+            const chatInput = document.getElementById('chatInput');
+            const sendMessage = document.getElementById('sendMessage');
+            const typingIndicator = document.querySelector('.typing-indicator');
+
+            // Toggle chat widget
+            minimizeChat.addEventListener('click', function(e) {
+                e.stopPropagation();
+                chatWidget.classList.toggle('minimized');
+                minimizeChat.classList.toggle('fa-minus');
+                minimizeChat.classList.toggle('fa-plus');
+            });
+
+            chatHeader.addEventListener('click', function() {
+                chatWidget.classList.toggle('minimized');
+                minimizeChat.classList.toggle('fa-minus');
+                minimizeChat.classList.toggle('fa-plus');
+            });
+
+            // Send message function
+            function sendChatMessage() {
+                const message = chatInput.value.trim();
+                if (!message) return;
+
+                // Add user message
+                const userMessageDiv = document.createElement('div');
+                userMessageDiv.className = 'message user-message';
+                userMessageDiv.textContent = message;
+                chatMessages.appendChild(userMessageDiv);
+
+                // Show typing indicator
+                typingIndicator.classList.add('active');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                // Send message to server
+                fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Hide typing indicator
+                    typingIndicator.classList.remove('active');
+
+                    if (data.success) {
+                        // Add bot message
+                        const botMessageDiv = document.createElement('div');
+                        botMessageDiv.className = 'message bot-message';
+                        botMessageDiv.textContent = data.response;
+                        chatMessages.appendChild(botMessageDiv);
+                    } else {
+                        // Handle error
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'message bot-message';
+                        errorDiv.textContent = 'Sorry, I encountered an error. Please try again.';
+                        chatMessages.appendChild(errorDiv);
+                    }
+
+                    // Scroll to bottom
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    typingIndicator.classList.remove('active');
+                    
+                    // Show error message
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'message bot-message';
+                    errorDiv.textContent = 'Sorry, I encountered an error. Please try again.';
+                    chatMessages.appendChild(errorDiv);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                });
+
+                // Clear input
+                chatInput.value = '';
+            }
+
+            // Send message on button click
+            sendMessage.addEventListener('click', sendChatMessage);
+
+            // Send message on Enter key
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendChatMessage();
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

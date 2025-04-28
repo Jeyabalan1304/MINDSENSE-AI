@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Support - MindSense AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .support-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .section-header i {
+            font-size: 3rem;
+            color: {{ emotion_data.color }};
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .support-message {
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .support-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .support-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .support-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .support-card i {
+            font-size: 2.5rem;
+            color: {{ emotion_data.color }};
+            margin-bottom: 1rem;
+        }
+
+        .support-card h3 {
+            color: white;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .support-card p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .support-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, {{ emotion_data.color }}, {{ emotion_data.color }}99);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .support-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, {{ emotion_data.color }}, {{ emotion_data.color }}cc);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 2rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(-5px);
+        }
+
+        .resources-section {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .resources-section h2 {
+            color: white;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .resource-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .resource-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .resource-item a {
+            color: {{ emotion_data.color }};
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+
+        .resource-item a:hover {
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .support-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar glass-nav">
+        <div class="nav-brand">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="MindSense AI" class="nav-logo">
+            <span class="brand-text">MindSense AI</span>
+        </div>
+        <div class="nav-user">
+            <div class="welcome">
+                <i class="fas fa-user-circle"></i>
+                <span>Welcome, {{ session.get('username', 'User') }}</span>
+            </div>
+            <a href="{{ url_for('logout') }}" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </nav>
+
+    <div class="support-container">
+        <a href="{{ url_for('recommendations') }}" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            Back to Recommendations
+        </a>
+
+        <div class="section-header">
+            <i class="fas fa-heart"></i>
+            <h1>Professional Support</h1>
+            <p>We're here to help you find the right support for your journey</p>
+        </div>
+
+        <div class="support-message">
+            <p>We understand that seeking help is a brave and important step. Our network of mental health professionals is ready to provide the support you need. Remember, you're not alone in this journey.</p>
+        </div>
+
+        <div class="support-grid">
+            <div class="support-card">
+                <i class="fas fa-search-location"></i>
+                <h3>Find a Therapist</h3>
+                <p>Connect with licensed therapists and counselors in your area who specialize in various mental health concerns.</p>
+                <a href="https://g.co/kgs/xvJDHc9" target="_blank" class="support-btn">
+                    <i class="fas fa-external-link-alt"></i>
+                    Search Therapists
+                </a>
+            </div>
+
+            <div class="support-card">
+                <i class="fas fa-hospital-user"></i>
+                <h3>Mental Health Centers</h3>
+                <p>Locate comprehensive mental health centers and clinics that offer a wide range of support services.</p>
+                <a href="https://g.co/kgs/MuTrbSL" target="_blank" class="support-btn">
+                    <i class="fas fa-external-link-alt"></i>
+                    Find Centers
+                </a>
+            </div>
+
+            <div class="support-card">
+                <i class="fas fa-phone-alt"></i>
+                <h3>24/7 Support Line</h3>
+                <p>Need to talk to someone right now? Our support line is available 24/7 with trained counselors ready to listen.</p>
+                <a href="tel:1800599599" class="support-btn">
+                    <i class="fas fa-phone"></i>
+                    Call Now
+                </a>
+            </div>
+        </div>
+
+        <div class="resources-section">
+            <h2><i class="fas fa-info-circle"></i> Additional Resources</h2>
+            <div class="resources-grid">
+                <div class="resource-item">
+                    <a href="https://www.nimh.nih.gov/health/find-help" target="_blank">
+                        <i class="fas fa-external-link-alt"></i>
+                        National Institute of Mental Health
+                    </a>
+                </div>
+                <div class="resource-item">
+                    <a href="https://www.nami.org/Support-Education/NAMI-HelpLine" target="_blank">
+                        <i class="fas fa-external-link-alt"></i>
+                        NAMI HelpLine
+                    </a>
+                </div>
+                <div class="resource-item">
+                    <a href="https://www.who.int/mental_health/resources/en/" target="_blank">
+                        <i class="fas fa-external-link-alt"></i>
+                        WHO Mental Health Resources
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

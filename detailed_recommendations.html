@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detailed Recommendations - MindSense AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .detailed-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .section-header i {
+            font-size: 2.5rem;
+            color: {{ emotion_data.color }};
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .recommendation-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .card-header i {
+            font-size: 1.5rem;
+            color: {{ emotion_data.color }};
+        }
+
+        .music-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .music-item {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 1.5rem;
+            border-radius: 15px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .music-item:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: scale(1.02);
+        }
+
+        .breathing-content {
+            color: white;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            margin: 2rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .support-section {
+            text-align: center;
+            margin-top: 4rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, {{ emotion_data.color }}22, {{ emotion_data.color }}11);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .support-section p {
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .support-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, {{ emotion_data.color }}, {{ emotion_data.color }}99);
+            color: white;
+            padding: 1.2rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 20px {{ emotion_data.color }}33;
+        }
+
+        .support-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px {{ emotion_data.color }}66;
+        }
+
+        .support-btn i {
+            font-size: 1.3rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 2rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(-5px);
+        }
+
+        @media (max-width: 768px) {
+            .music-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .breathing-content {
+                padding: 1.5rem;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar glass-nav">
+        <div class="nav-brand">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="MindSense AI" class="nav-logo">
+            <span class="brand-text">MindSense AI</span>
+        </div>
+        <div class="nav-user">
+            <div class="welcome">
+                <i class="fas fa-user-circle"></i>
+                <span>Welcome, {{ session.get('username', 'User') }}</span>
+            </div>
+            <a href="{{ url_for('logout') }}" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </nav>
+
+    <div class="detailed-container">
+        <a href="{{ url_for('recommendations') }}" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            Back to Recommendations
+        </a>
+
+        <div class="section-header">
+            <i class="fas {{ emotion_data.icon }}"></i>
+            <h1>Your Personalized Recommendations</h1>
+        </div>
+
+        <!-- Music Recommendations -->
+        <div class="recommendation-card">
+            <div class="card-header">
+                <i class="fas fa-music"></i>
+                <h2>Music Recommendations</h2>
+            </div>
+            <div class="music-grid">
+                {% for music in emotion_data.music %}
+                <div class="music-item">
+                    <i class="fas fa-play"></i>
+                    <span>{{ music }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            <p style="color: white; margin-top: 1rem;">
+                These music selections are carefully chosen to complement your current emotional state and help enhance your mood.
+            </p>
+        </div>
+
+        <!-- Breathing Exercise -->
+        <div class="recommendation-card">
+            <div class="card-header">
+                <i class="fas fa-wind"></i>
+                <h2>Breathing Exercise</h2>
+            </div>
+            <div class="breathing-content">
+                {{ emotion_data.breathing }}
+            </div>
+            <p style="color: white; margin-top: 1rem;">
+                Practice this breathing exercise whenever you need to center yourself or manage your emotions effectively.
+            </p>
+        </div>
+
+        <!-- Professional Support Section -->
+        <div class="support-section">
+            <h2 style="color: white; margin-bottom: 1.5rem;">Need Additional Support?</h2>
+            <p>Our network of mental health professionals is here to provide expert guidance and support.</p>
+            <a href="{{ url_for('professional_support') }}" class="support-btn">
+                <i class="fas fa-heart"></i>
+                Access Professional Support
+            </a>
+        </div>
+    </div>
+</body>
+</html> 
